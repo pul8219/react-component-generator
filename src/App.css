@@ -1,0 +1,793 @@
+/* ══════════════════════════════════════════════════════════════
+   Pixel Component Workshop — a machine that fabricates UI parts.
+   Duotone plum-on-bone, one amber power accent, hard pixel edges.
+   ══════════════════════════════════════════════════════════════ */
+
+.app {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* ── shared pixel markers ──────────────────────────────────── */
+.panel-kicker,
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-micro);
+  font-size: 9px;
+  color: var(--ink-soft);
+  letter-spacing: 0.5px;
+}
+.panel-kicker::before,
+.eyebrow::before {
+  content: '▪ ';
+  color: var(--accent);
+}
+
+/* ── header: the machine nameplate ─────────────────────────── */
+.app-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+  background: var(--panel);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.brand-mark {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  background: var(--accent);
+  border: var(--border);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 28px;
+}
+
+.header-copy {
+  min-width: 0;
+}
+
+.header-copy h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.header-copy p {
+  max-width: 62ch;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.header-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(96px, 1fr));
+  gap: 10px;
+}
+
+.header-meta div {
+  padding: 8px 12px;
+  background: var(--panel-sunken);
+  border: var(--border);
+}
+
+.header-meta span {
+  display: block;
+  font-family: var(--font-micro);
+  font-size: 9px;
+  color: var(--ink-soft);
+}
+
+.header-meta strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 22px;
+  font-weight: 400;
+  font-family: var(--font-small);
+  color: var(--ink);
+}
+
+/* ── workspace grid ────────────────────────────────────────── */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.composer-panel,
+.settings-panel {
+  background: var(--panel);
+  border: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.composer-panel {
+  padding: 22px;
+}
+
+.settings-panel {
+  padding: 20px;
+}
+
+/* ── the prompt console (hero) ─────────────────────────────── */
+.prompt-section {
+  width: 100%;
+}
+
+.prompt-heading,
+.settings-header {
+  margin-bottom: 18px;
+}
+
+.prompt-heading h2,
+.settings-header h2,
+.results-header h2 {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.prompt-form {
+  display: grid;
+  gap: 14px;
+}
+
+/* the textarea = a sunken CRT screen */
+.prompt-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 16px;
+  resize: vertical;
+  background: var(--panel-sunken);
+  border: var(--border);
+  color: var(--ink);
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.7;
+  box-shadow: inset 3px 3px 0 rgba(43, 30, 74, 0.08);
+}
+
+.prompt-textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+.prompt-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: inset 3px 3px 0 rgba(247, 162, 11, 0.14);
+}
+
+/* primary action — the "stamp" button */
+.btn-generate {
+  justify-self: start;
+  min-width: 180px;
+  height: 48px;
+  padding: 0 24px;
+  background: var(--accent);
+  border: var(--border);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 15px;
+  box-shadow: var(--shadow);
+  transition: transform 0.06s steps(1), box-shadow 0.06s steps(1);
+}
+
+.btn-generate:hover:not(:disabled) {
+  background: #ffb52e;
+}
+
+.btn-generate:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.btn-generate:disabled {
+  background: var(--panel-sunken);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+  box-shadow: var(--shadow);
+}
+
+.loading-spinner {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* preset prompts — parts you can pull off the shelf (not a sequence) */
+.prompt-examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.examples-label {
+  grid-column: 1 / -1;
+  font-family: var(--font-micro);
+  font-size: 9px;
+  color: var(--ink-soft);
+}
+.examples-label::before {
+  content: '▪ ';
+  color: var(--accent);
+}
+
+.example-chip {
+  min-height: 56px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: var(--border);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: var(--font-small);
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: left;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.06s steps(1), box-shadow 0.06s steps(1),
+    color 0.06s steps(1);
+}
+
+.example-chip:hover {
+  color: var(--ink);
+  background: var(--panel-sunken);
+}
+
+.example-chip:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+/* ── settings / runtime panel ──────────────────────────────── */
+.provider-select,
+.api-key-input {
+  margin-top: 18px;
+}
+
+.provider-select label,
+.api-key-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-small);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.provider-select select,
+.api-key-field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  background: var(--panel-sunken);
+  border: var(--border);
+  color: var(--ink);
+  font-family: var(--font-small);
+  font-size: 12px;
+}
+
+.provider-select select {
+  cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+    linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+  background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.provider-select select:focus,
+.api-key-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.api-key-field {
+  display: flex;
+  gap: 8px;
+}
+
+.api-key-field input {
+  min-width: 0;
+  font-family: var(--font-code);
+  font-size: 12px;
+}
+
+.key-status {
+  margin-top: 12px;
+  padding-left: 16px;
+  position: relative;
+  font-family: var(--font-small);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.key-status::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  background: var(--ink-faint);
+  border: 2px solid var(--ink);
+}
+.key-status--ready {
+  color: var(--ink);
+}
+.key-status--ready::before {
+  background: var(--live);
+}
+
+/* generic pixel button (toggle / clear / card actions) */
+.btn-toggle-key,
+.btn-clear,
+.btn-refresh,
+.btn-regenerate,
+.btn-remove,
+.btn-copy {
+  min-height: 40px;
+  padding: 0 14px;
+  background: var(--panel);
+  border: var(--border);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-small);
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.06s steps(1), box-shadow 0.06s steps(1),
+    background 0.06s steps(1), color 0.06s steps(1);
+}
+
+.btn-toggle-key:hover,
+.btn-clear:hover,
+.btn-refresh:hover,
+.btn-regenerate:hover:not(:disabled),
+.btn-copy:hover {
+  background: var(--panel-sunken);
+}
+
+.btn-toggle-key:active,
+.btn-clear:active,
+.btn-refresh:active,
+.btn-regenerate:active:not(:disabled),
+.btn-remove:active,
+.btn-copy:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.btn-refresh {
+  width: 40px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.btn-remove:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-regenerate:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-clear:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ── error banner ──────────────────────────────────────────── */
+.error-banner {
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: var(--danger-bg);
+  border: 3px solid var(--danger);
+  box-shadow: 4px 4px 0 var(--danger);
+}
+
+.error-banner p {
+  font-family: var(--font-small);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--danger);
+}
+.error-banner p::before {
+  content: '! ';
+  font-weight: 700;
+}
+
+/* ── results ───────────────────────────────────────────────── */
+.results-section {
+  min-height: 320px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 28px 0 16px;
+}
+
+/* empty state: a CRT on STANDBY — centering is meaningful here */
+.empty-state {
+  display: grid;
+  place-items: center;
+  gap: 22px;
+  min-height: 340px;
+  padding: 40px;
+  text-align: center;
+  background: var(--panel);
+  border: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.empty-preview {
+  width: 200px;
+  max-width: 100%;
+  background: var(--ink);
+  border: var(--border);
+  padding: 14px;
+  box-shadow: inset 0 0 0 3px var(--panel);
+}
+
+.empty-window {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.empty-window span {
+  width: 10px;
+  height: 10px;
+  background: var(--panel);
+}
+.empty-window span:first-child {
+  background: var(--accent);
+}
+
+.empty-canvas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.empty-card {
+  height: 40px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ink-soft) 0,
+    var(--ink-soft) 3px,
+    var(--ink) 3px,
+    var(--ink) 6px
+  );
+  border: 2px solid var(--panel);
+}
+.empty-card--primary {
+  background: var(--accent);
+}
+.empty-card--wide {
+  grid-column: 1 / -1;
+  height: 28px;
+  background: var(--live);
+}
+
+.empty-copy h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--ink);
+}
+.empty-copy h2::after {
+  content: ' ▮';
+  color: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+.empty-copy p {
+  margin-top: 10px;
+  max-width: 42ch;
+  font-family: var(--font-small);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* loading: a scanline sweep across the screen — one motion moment */
+.loading-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px;
+  margin-bottom: 20px;
+  background: var(--panel);
+  border: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.loading-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(247, 162, 11, 0.25),
+    transparent
+  );
+  animation: scan 1.1s steps(12) infinite;
+}
+
+@keyframes scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.loading-pulse {
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  border: 2px solid var(--ink);
+  animation: hop 0.6s steps(2) infinite alternate;
+}
+
+@keyframes hop {
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.loading-card p {
+  font-family: var(--font-small);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.results-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── component card ────────────────────────────────────────── */
+.component-card {
+  background: var(--panel);
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border-bottom: var(--border);
+}
+
+.card-title-group {
+  min-width: 0;
+}
+
+.card-title-group span {
+  display: inline-block;
+  font-family: var(--font-micro);
+  font-size: 9px;
+  color: var(--ink-soft);
+}
+.card-title-group span::before {
+  content: '▪ ';
+  color: var(--live);
+}
+
+.card-prompt {
+  margin-top: 6px;
+  font-family: var(--font-small);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.card-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.card-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--panel-sunken);
+  border-bottom: var(--border);
+}
+
+.tab {
+  flex: 1;
+  min-height: 38px;
+  background: transparent;
+  border: 3px solid transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: var(--font-small);
+  font-size: 12px;
+  transition: color 0.06s steps(1), background 0.06s steps(1);
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab--active {
+  background: var(--panel);
+  border: var(--border);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.card-content {
+  min-height: 280px;
+}
+
+.preview-panel,
+.code-panel {
+  height: 100%;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: var(--border);
+}
+
+.panel-header h3 {
+  position: relative;
+  padding-left: 16px;
+  font-family: var(--font-small);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink);
+}
+/* a live LED — the machine is powered on */
+.panel-header h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--live);
+  border: 2px solid var(--ink);
+}
+
+.preview-content {
+  padding: 18px;
+}
+
+/* the fabrication bed: where a generated part sits, on a dot grid */
+.preview-render {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+  padding: 32px;
+  background-color: var(--panel-sunken);
+  background-image: radial-gradient(var(--ink-faint) 1.5px, transparent 1.5px);
+  background-size: 12px 12px;
+  border: var(--border);
+}
+
+.preview-error {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--danger-bg);
+  border: 3px solid var(--danger);
+  color: var(--danger);
+  font-family: var(--font-code);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.btn-copy {
+  background: var(--ink);
+  color: var(--panel);
+  border-color: var(--ink);
+}
+
+.btn-copy:hover {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+.code-block {
+  min-height: 320px;
+  margin: 0;
+  padding: 20px;
+  overflow-x: auto;
+  background: var(--ink);
+  color: #d8d2e6;
+  font-family: var(--font-code);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ── responsive ────────────────────────────────────────────── */
+@media (max-width: 1080px) {
+  .app-header,
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+  .header-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .app {
+    padding: 20px 14px 48px;
+  }
+  .header-copy h1,
+  .prompt-heading h2,
+  .settings-header h2,
+  .results-header h2,
+  .empty-copy h2 {
+    font-size: 22px;
+  }
+  .prompt-examples {
+    grid-template-columns: 1fr;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .card-actions {
+    width: 100%;
+  }
+  .btn-refresh,
+  .btn-regenerate,
+  .btn-remove {
+    flex: 1;
+  }
+  .preview-render {
+    min-height: 240px;
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-card::after,
+  .loading-pulse,
+  .empty-copy h2::after {
+    animation: none;
+  }
+}

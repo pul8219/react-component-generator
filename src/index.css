@@ -1,0 +1,107 @@
+/* ── Galmuri: bitmap/pixel family, self-hosted (Korean + Latin + Mono) ── */
+@font-face {
+  font-family: 'Galmuri14';
+  src: url('/fonts/Galmuri14.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('/fonts/Galmuri11.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('/fonts/Galmuri11-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Galmuri9';
+  src: url('/fonts/Galmuri9.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GalmuriMono11';
+  src: url('/fonts/GalmuriMono11.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+
+  /* Chassis + screen */
+  --chassis: #c7c4d0;
+  --chassis-dot: #b3afc0;
+  --panel: #f4f2f7;
+  --panel-sunken: #ebe8f1;
+
+  /* Ink (text + every border) — deliberate deep plum, not a fake black */
+  --ink: #2b1e4a;
+  --ink-soft: #6a5f86;
+  --ink-faint: #9a92ad;
+
+  /* One power accent + functional signals */
+  --accent: #f7a20b;
+  --accent-ink: #2b1e4a;
+  --live: #12a594;
+  --danger: #e5484d;
+  --danger-bg: #fbe3e4;
+
+  /* Pixel structure */
+  --border: 3px solid var(--ink);
+  --shadow: 4px 4px 0 var(--ink);
+  --shadow-lg: 6px 6px 0 var(--ink);
+
+  --font-body: 'Galmuri14', 'Galmuri11', ui-monospace, monospace;
+  --font-display: 'Galmuri14', 'Galmuri11', monospace;
+  --font-small: 'Galmuri11', ui-monospace, monospace;
+  --font-micro: 'Galmuri9', 'Galmuri11', monospace;
+  --font-code: 'GalmuriMono11', ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  min-height: 100vh;
+  background-color: var(--chassis);
+  /* the literal "도트" — a dot-grid stamped across the machine chassis */
+  background-image: radial-gradient(var(--chassis-dot) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  background-position: -1px -1px;
+  /* keep bitmap glyph edges hard */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  text-rendering: geometricPrecision;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+*:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
