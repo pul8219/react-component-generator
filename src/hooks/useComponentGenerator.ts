@@ -32,7 +32,6 @@ export function useComponentGenerator(): UseComponentGeneratorReturn {
     async (prompt: string, apiKey: string | undefined, provider: Provider) => {
       setIsLoading(true);
       setError(null);
-      setPromptHistory((prev) => addPromptToHistory(prev, prompt));
 
       try {
         const res = await fetch('/api/generate', {
@@ -55,6 +54,7 @@ export function useComponentGenerator(): UseComponentGeneratorReturn {
         };
 
         setComponents((prev) => [newComponent, ...prev]);
+        setPromptHistory((prev) => addPromptToHistory(prev, prompt));
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
         setError(message);

@@ -41,4 +41,22 @@ describe('useComponentGenerator - 영속화', () => {
       expect(saved[0].prompt).toBe('버튼');
     });
   });
+
+  it('생성에 실패하면 프롬프트를 히스토리에 기록하지 않는다', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: async () => ({ error: 'boom' }),
+      }),
+    );
+    const { result } = renderHook(() => useComponentGenerator());
+
+    await act(async () => {
+      await result.current.generate('실패 프롬프트', undefined, 'google');
+    });
+
+    expect(result.current.error).toBe('boom');
+    expect(result.current.promptHistory).not.toContain('실패 프롬프트');
+  });
 });

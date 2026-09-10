@@ -3,6 +3,7 @@ import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
 import { usePersistentState } from './hooks/usePersistentState';
+import { normalizeProvider } from './utils/normalizeProvider';
 import type { Provider } from './types';
 import './App.css';
 
@@ -14,7 +15,9 @@ const PROVIDER_CONFIG = {
 function App() {
   const [apiKey, setApiKey] = usePersistentState('rcg:apiKey', '');
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = usePersistentState<Provider>('rcg:provider', 'google');
+  const [provider, setProvider] = usePersistentState<Provider>('rcg:provider', 'google', {
+    deserialize: normalizeProvider,
+  });
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,

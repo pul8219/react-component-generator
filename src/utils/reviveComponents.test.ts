@@ -21,4 +21,24 @@ describe('reviveComponents', () => {
     expect(reviveComponents({})).toEqual([]);
     expect(reviveComponents('nope')).toEqual([]);
   });
+
+  it('요소가 null이면 예외 없이 걸러낸다', () => {
+    expect(reviveComponents([null])).toEqual([]);
+  });
+
+  it('필수 필드가 없는 요소는 걸러낸다', () => {
+    expect(reviveComponents([{}])).toEqual([]);
+    expect(reviveComponents([{ id: '1' }])).toEqual([]);
+  });
+
+  it('유효한 요소와 손상된 요소가 섞여 있으면 유효한 것만 남긴다', () => {
+    const raw = [
+      { id: '1', prompt: 'p', code: 'render(1)', createdAt: '2026-01-01T00:00:00.000Z' },
+      null,
+      { id: '2' },
+    ];
+    const result = reviveComponents(raw);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('1');
+  });
 });
