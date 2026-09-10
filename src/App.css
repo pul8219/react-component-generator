@@ -169,6 +169,38 @@
   box-shadow: inset 3px 3px 0 rgba(247, 162, 11, 0.14);
 }
 
+.prompt-textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+  box-shadow: inset 3px 3px 0 rgba(229, 72, 77, 0.14);
+}
+
+/* character counter + length error, sits between textarea and button */
+.prompt-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 16px;
+  margin-top: -4px;
+}
+
+.prompt-error {
+  color: var(--danger);
+  font-family: var(--font-micro);
+  font-size: 11px;
+}
+
+.prompt-counter {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-family: var(--font-micro);
+  font-size: 11px;
+}
+
+.prompt-counter.is-over {
+  color: var(--danger);
+}
+
 /* primary action — the "stamp" button */
 .btn-generate {
   justify-self: start;
