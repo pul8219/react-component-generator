@@ -752,17 +752,6 @@
   padding: 18px;
 }
 
-/* 격리된 미리보기 iframe (allow-scripts 전용, 불투명 오리진) */
-.preview-frame {
-  display: block;
-  width: 100%;
-  min-height: 240px;
-  border: var(--border);
-  background-color: var(--panel-sunken);
-  background-image: radial-gradient(var(--ink-faint) 1.5px, transparent 1.5px);
-  background-size: 12px 12px;
-}
-
 /* the fabrication bed: where a generated part sits, on a dot grid */
 .preview-render {
   display: flex;
