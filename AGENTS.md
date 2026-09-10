@@ -24,13 +24,13 @@
 
 - **API 키를 클라이언트로 반환하지 마라.** `/api/config`는 키 값이 아니라 존재 여부 boolean만 내려준다 (`server/index.ts:147-157`, `envKeys: { anthropic: !!ENV_KEYS.anthropic, ... }`). 이 엔드포인트에 키 문자열을 절대 추가하지 마라.
 - **키 해석은 서버에서만.** `resolveApiKey`가 `clientKey || process.env` 순으로 서버에서 결정한다 (`server/index.ts:59-66`). 환경변수 키를 클라이언트로 흘리는 경로를 만들지 마라.
-- **클라이언트 키는 localStorage에 영속화한다 (소유자 결정, 위험 감수).** 프론트는 `usePersistentState('rcg:apiKey', ...)`로 API 키를 localStorage에 저장하며 프로바이더 전환 시 비운다 (`src/App.tsx`, `src/hooks/usePersistentState.ts`). 이는 원래 "영속 저장 금지" 규칙을 프로젝트 소유자가 명시적으로 완화한 것으로, XSS 등으로 키가 노출될 수 있는 위험을 감수한 결정이다. **위 두 규칙(키를 응답으로 반환 금지 · 키 해석은 서버에서만)은 그대로 유효하다** — 클라이언트 저장 허용이 그 서버 경계까지 여는 것은 아니다. 이 완화를 되돌리려면(=다시 저장 금지로) 소유자 확인을 받아라.
+- **클라이언트 키는 localStorage에 영속화한다 (소유자 결정) — 단, 미리보기 격리가 짝이다.** 프론트는 `usePersistentState('rcg:apiKey', ...)`로 API 키를 localStorage에 저장하며 프로바이더 전환 시 비운다 (`src/App.tsx`, `src/hooks/usePersistentState.ts`). 이는 원래 "영속 저장 금지" 규칙을 소유자가 완화한 것이다. 이 앱은 생성 코드를 react-live로 상시 실행하므로, 저장된 키가 인페이지 코드에 노출되지 않도록 **미리보기를 `sandbox="allow-scripts"` iframe(불투명 오리진)에서 실행한다 (`src/components/LivePreview.tsx`, `src/preview/SandboxApp.tsx`)** — 이 격리가 키 저장의 전제 조건이다. **미리보기 iframe에 `allow-same-origin`을 절대 추가하지 마라** — 오리진이 부모와 합쳐져 생성 코드가 `localStorage`의 키를 읽을 수 있게 된다(격리 무효화). **위 두 규칙(키를 응답으로 반환 금지 · 키 해석은 서버에서만)도 그대로 유효하다.** 키 저장을 되돌리거나 격리를 약화하려면 소유자 확인을 받아라.
 
 ### 생성 코드 계약 (하드 제약 + 이중 방어)
 
 생성되는 컴포넌트 코드는 react-live에서 실행 가능해야 한다. 다음은 깨지면 미리보기가 즉시 죽는 제약이다.
 
-- **`render(...)` 호출 필수.** `LivePreview`는 `noInline` 모드라 `render()`가 없으면 아무것도 그리지 않는다 (`src/components/LivePreview.tsx:14`). 이 호출은 두 겹으로 방어된다: SYSTEM_PROMPT가 모델에 지시하고(`server/index.ts:12`), 응답에 없으면 `ensureRenderCall`이 서버에서 주입한다(`server/generator.ts:16-23`). **`ensureRenderCall`을 제거하지 마라** — 프롬프트만 믿으면 모델이 빠뜨렸을 때 빈 화면이 된다.
+- **`render(...)` 호출 필수.** 미리보기는 `noInline` 모드라 `render()`가 없으면 아무것도 그리지 않는다. react-live 실행은 격리 iframe 안(`src/preview/SandboxApp.tsx`)에서 일어나고, `src/components/LivePreview.tsx`는 그 iframe에 코드를 postMessage로 전달만 한다. 이 호출은 두 겹으로 방어된다: SYSTEM_PROMPT가 모델에 지시하고(`server/index.ts:12`), 응답에 없으면 `ensureRenderCall`이 서버에서 주입한다(`server/generator.ts:16-23`). **`ensureRenderCall`을 제거하지 마라** — 프롬프트만 믿으면 모델이 빠뜨렸을 때 빈 화면이 된다.
 - **생성 코드에 `import`·TypeScript 문법 금지.** React는 전역 스코프에 이미 있고, 타입 주석/인터페이스/제네릭/`as`는 금지다 (`server/index.ts:10-20`). react-live는 모듈 해석을 못 하므로 import가 있으면 실행이 깨진다. SYSTEM_PROMPT를 수정할 때 이 규칙을 유지하라.
 - **마크다운 코드펜스도 이중 방어된다.** 프롬프트가 "펜스 없이"를 요구하지만(`server/index.ts:16`), `stripCodeFences`가 서버에서 한 번 더 제거한다(`server/generator.ts:5-10`). 이 정규화를 제거하지 마라.
 
