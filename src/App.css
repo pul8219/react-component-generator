@@ -283,6 +283,33 @@
   box-shadow: 0 0 0 var(--ink);
 }
 
+.example-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.history-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-history-clear {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-micro);
+  font-size: 9px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+}
+
+.btn-history-clear:hover {
+  color: var(--ink);
+}
+
 /* ── settings / runtime panel ──────────────────────────────── */
 .provider-select,
 .api-key-input {
