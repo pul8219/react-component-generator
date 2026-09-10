@@ -24,7 +24,10 @@
 
 - **API 키를 클라이언트로 반환하지 마라.** `/api/config`는 키 값이 아니라 존재 여부 boolean만 내려준다 (`server/index.ts:147-157`, `envKeys: { anthropic: !!ENV_KEYS.anthropic, ... }`). 이 엔드포인트에 키 문자열을 절대 추가하지 마라.
 - **키 해석은 서버에서만.** `resolveApiKey`가 `clientKey || process.env` 순으로 서버에서 결정한다 (`server/index.ts:59-66`). 환경변수 키를 클라이언트로 흘리는 경로를 만들지 마라.
-- **클라이언트 키를 저장하지 마라.** 프론트는 API 키를 React state로만 들고 있고 프로바이더 전환 시 비운다 (`src/App.tsx:14`, `:41-44`). localStorage 등 영속 저장을 추가하지 마라 — 키 노출 경로가 된다.
+- **클라이언트 키는 localStorage에 영속화한다 (소유자 결정, 위험 수용).** 프론트는 `usePersistentState('rcg:apiKey', ...)`로 API 키를 localStorage에 저장하며 프로바이더 전환 시 비운다 (`src/App.tsx`, `src/hooks/usePersistentState.ts`). 이는 원래 "영속 저장 금지" 규칙을 소유자가 완화한 것이다.
+  - **감수한 구체적 위험(코드 리뷰 finding #1):** 이 앱은 react-live로 생성 코드를 **부모와 같은 realm/오리진에서 in-page 실행**한다 (`src/components/LivePreview.tsx`). 따라서 생성/프롬프트 인젝션된 컴포넌트가 `localStorage.getItem('rcg:apiKey')`로 저장된 키를 읽어 외부로 유출할 수 있다. 일반 XSS보다 노출면이 넓다(신뢰 불가 코드를 설계상 상시 실행). 소유자는 로컬 개인 도구 특성상 이 위험을 수용했다.
+  - **완전 차단은 실행을 별도 오리진 sandbox로 분리해야 가능하다.** ⚠️ **단일 오리진 `sandbox="allow-scripts"` iframe으로는 재시도하지 마라** — 불투명 오리진에서 Vite의 ES module 로드가 CORS로 차단되어 미리보기가 하얀 화면이 된다(검증·롤백 완료). 격리가 필요하면 별도 도메인/서브도메인 서빙 + `allow-same-origin`이 필요하다.
+  - **위 두 규칙(키를 응답으로 반환 금지 · 키 해석은 서버에서만)은 그대로 유효하다.** 키 저장을 되돌리거나(=저장 금지) 격리를 도입하려면 소유자 확인을 받아라.
 
 ### 생성 코드 계약 (하드 제약 + 이중 방어)
 

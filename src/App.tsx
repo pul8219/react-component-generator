@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
+import { usePersistentState } from './hooks/usePersistentState';
+import { normalizeProvider } from './utils/normalizeProvider';
 import type { Provider } from './types';
 import './App.css';
 
@@ -11,15 +13,25 @@ const PROVIDER_CONFIG = {
 } as const;
 
 function App() {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = usePersistentState('rcg:apiKey', '');
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = useState<Provider>('google');
+  const [provider, setProvider] = usePersistentState<Provider>('rcg:provider', 'google', {
+    deserialize: normalizeProvider,
+  });
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,
   });
-  const { components, isLoading, error, generate, removeComponent, clearAll } =
-    useComponentGenerator();
+  const {
+    components,
+    promptHistory,
+    isLoading,
+    error,
+    generate,
+    removeComponent,
+    clearAll,
+    clearHistory,
+  } = useComponentGenerator();
 
   useEffect(() => {
     fetch('/api/config')
@@ -69,6 +81,27 @@ function App() {
       <main className="workspace">
         <section className="composer-panel" aria-label="컴포넌트 생성">
           <PromptInput onGenerate={handleGenerate} isLoading={isLoading} />
+          {promptHistory.length > 0 && (
+            <div className="prompt-examples" aria-label="최근 프롬프트">
+              <div className="history-head">
+                <span className="examples-label">최근 프롬프트</span>
+                <button className="btn-history-clear" type="button" onClick={clearHistory}>
+                  지우기
+                </button>
+              </div>
+              {promptHistory.map((item) => (
+                <button
+                  key={item}
+                  className="example-chip"
+                  type="button"
+                  onClick={() => handleGenerate(item)}
+                  disabled={isLoading}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <aside className="settings-panel" aria-label="실행 설정">
