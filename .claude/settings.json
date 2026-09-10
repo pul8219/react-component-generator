@@ -117,5 +117,19 @@
       "Bash(*.git-credentials*)",
       "Bash(*.token*)"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/tdd-reminder.sh",
+            "statusMessage": "TDD 규칙 확인 중..."
+          }
+        ]
+      }
+    ]
   }
 }
