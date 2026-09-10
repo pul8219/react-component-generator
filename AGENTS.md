@@ -49,6 +49,7 @@ Anthropic과 Google 경로는 대칭이 아니다. 한쪽을 고칠 때 다른 �
 - **Do:** 요청 정규화·순수 로직은 `server/generator.ts` 같은 순수 함수에 넣어라. `Bun.serve` 핸들러(`server/index.ts`)는 테스트가 없다 — 로직을 인라인으로 넣으면 테스트 경계 밖으로 밀려난다 (`server/generator.ts:1-2` 주석이 이 분리 의도를 명시).
 - **Do:** 서버는 Bun 런타임이다 (`Bun.serve`, `server/index.ts:138`). Node 전용 모듈(`http`, `express` 등)을 도입하지 마라.
 - **Don't:** API 키·시크릿을 코드나 커밋에 넣지 마라. `.env`는 `.gitignore` 대상이며 `.env.example`에는 빈 값만 둔다.
+- **민감 파일 접근은 `permissions.deny`로 차단되어 있다 (`.claude/settings.json`).** `.env`·키(`*.pem`·`*.key`·`id_rsa` 등)·크리덴셜·시크릿·`.ssh/`·`.aws/`·`.npmrc`·`.git-credentials` 등을 세 계층(`Read`/`Edit`·`Write`/`Bash`)에서 막는다. `Read` deny가 1차 방어이고, `Bash(*token*)` 글롭은 `cat`·`grep`·`cp`·`curl` 우회를 잡는 최선 방어(best-effort)다. **이 deny 목록을 지우거나 약화하지 마라** — 이 앱은 생성 코드를 상시 실행하므로 저장된 키가 파일 경유로 유출되는 경로를 하나 더 막는 것이 목적이다. 새 시크릿 파일 형식이 생기면 목록에 패턴을 추가하라.
 
 ## Standards & References
 
