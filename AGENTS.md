@@ -24,7 +24,7 @@
 
 - **API 키를 클라이언트로 반환하지 마라.** `/api/config`는 키 값이 아니라 존재 여부 boolean만 내려준다 (`server/index.ts:147-157`, `envKeys: { anthropic: !!ENV_KEYS.anthropic, ... }`). 이 엔드포인트에 키 문자열을 절대 추가하지 마라.
 - **키 해석은 서버에서만.** `resolveApiKey`가 `clientKey || process.env` 순으로 서버에서 결정한다 (`server/index.ts:59-66`). 환경변수 키를 클라이언트로 흘리는 경로를 만들지 마라.
-- **클라이언트 키를 저장하지 마라.** 프론트는 API 키를 React state로만 들고 있고 프로바이더 전환 시 비운다 (`src/App.tsx:14`, `:41-44`). localStorage 등 영속 저장을 추가하지 마라 — 키 노출 경로가 된다.
+- **클라이언트 키는 localStorage에 영속화한다 (소유자 결정, 위험 감수).** 프론트는 `usePersistentState('rcg:apiKey', ...)`로 API 키를 localStorage에 저장하며 프로바이더 전환 시 비운다 (`src/App.tsx`, `src/hooks/usePersistentState.ts`). 이는 원래 "영속 저장 금지" 규칙을 프로젝트 소유자가 명시적으로 완화한 것으로, XSS 등으로 키가 노출될 수 있는 위험을 감수한 결정이다. **위 두 규칙(키를 응답으로 반환 금지 · 키 해석은 서버에서만)은 그대로 유효하다** — 클라이언트 저장 허용이 그 서버 경계까지 여는 것은 아니다. 이 완화를 되돌리려면(=다시 저장 금지로) 소유자 확인을 받아라.
 
 ### 생성 코드 계약 (하드 제약 + 이중 방어)
 
